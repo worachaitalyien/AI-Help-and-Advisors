@@ -69,25 +69,27 @@
                 <a href="menu.html" class="w3-bar-item w3-button">Menu</a>
                 <a href="disease.html" class="w3-bar-item w3-button">Disease</a>
                 <a href="contact.html" class="w3-bar-item w3-button">Contact Us</a>
+                <!-- เมนูเลือกภาษา -->
+                <select id="languageSwitcher" class="w3-bar-item w3-select" style="width:auto;">
+                    <option value="en">English</option>
+                    <option value="th">ไทย</option>
+                    <option value="zh">中文</option>
+                </select>
             </div>
         </div>
     </div>
 
     <!-- เนื้อหาข้างล่าง -->
     <div class="container">
-        <h1><strong>Medical Advisor</strong></h1>
-
-        <h2>Click in message Block</h2>
-
-        <h3>**Advice** Please Wait 3s if you don't see Bot's Icon !</h3>
-        <p>If you want to get advice about health, you can click the icon below.
+        <h1 id="title"><strong>Medical Advisor</strong></h1>
+        <h2 id="subTitle">Click in message Block</h2>
+        <h3 id="advice">**Advice** Please Wait 3s if you don't see Bot's Icon!</h3>
+        <p id="description">If you want to get advice about health, you can click the icon below.
             Please fill in your symptoms completely so that the bot can analyze the data efficiently and accurately.</p>
-
-        <p>If you want to see information about symptoms of various diseases, you can click the left arrow to see information.
+        <p id="info">If you want to see information about symptoms of various diseases, you can click the left arrow to see information.
             We have referenced information from:</p>
-
-        <h3>Health New Zealand | Te Whatu Ora</h3>
-        <a href="https://info.health.nz/" target="_blank">Click to go to Health New Zealand | Te Whatu Ora's Website</a>
+        <h3 id="reference">Health New Zealand | Te Whatu Ora</h3>
+        <a id="referenceLink" href="https://info.health.nz/" target="_blank">Click to go to Health New Zealand | Te Whatu Ora's Website</a>
 
         <!-- Botpress script -->
         <script src="https://cdn.botpress.cloud/webchat/v2.1/inject.js"></script>
@@ -99,40 +101,50 @@
     <a href="disease.html" class="arrow right">&#10095;</a>
 
     <script>
-        // Function to log chat data to Google Sheets
-        function logChatToGoogleSheets(userMessage, botMessage) {
-            fetch('YOUR_APPS_SCRIPT_WEB_APP_URL', { // Replace with your Apps Script Web App URL
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    userMessage: userMessage,
-                    botMessage: botMessage
-                })
-            })
-            .then(response => response.json())
-            .then(data => console.log('Data logged to Google Sheets:', data))
-            .catch(error => console.error('Error logging to Google Sheets:', error));
-        }
-
-        // Event listener for messages from Botpress
-        window.addEventListener("message", function(event) {
-            if (event.data && event.data.payload && event.data.payload.text) {
-                const userMessage = event.data.payload.text;
-
-                // Log user messages
-                if (event.data.type === 'user_message') {
-                    logChatToGoogleSheets(userMessage, 'bot response pending...');
-                }
-
-                // Log bot responses
-                if (event.data.type === 'bot_response') {
-                    const botMessage = event.data.payload.text;
-                    logChatToGoogleSheets('User message already logged', botMessage);
-                }
+        const translations = {
+            en: {
+                title: "Medical Advisor",
+                subTitle: "Click in message Block",
+                advice: "**Advice** Please Wait 3s if you don't see Bot's Icon!",
+                description: "If you want to get advice about health, you can click the icon below. Please fill in your symptoms completely so that the bot can analyze the data efficiently and accurately.",
+                info: "If you want to see information about symptoms of various diseases, you can click the left arrow to see information. We have referenced information from:",
+                reference: "Health New Zealand | Te Whatu Ora",
+                referenceLink: "Click to go to Health New Zealand | Te Whatu Ora's Website"
+            },
+            th: {
+                title: "ที่ปรึกษาทางการแพทย์",
+                subTitle: "คลิกในบล็อกข้อความ",
+                advice: "**คำแนะนำ** กรุณารอ 3 วินาทีหากคุณไม่เห็นไอคอนของบอท!",
+                description: "หากคุณต้องการรับคำแนะนำเกี่ยวกับสุขภาพ คุณสามารถคลิกที่ไอคอนด้านล่าง โปรดกรอกอาการของคุณให้ครบถ้วนเพื่อให้บอทสามารถวิเคราะห์ข้อมูลได้อย่างมีประสิทธิภาพและแม่นยำ",
+                info: "หากคุณต้องการดูข้อมูลเกี่ยวกับอาการของโรคต่างๆ คุณสามารถคลิกลูกศรซ้ายเพื่อดูข้อมูล เราได้อ้างอิงข้อมูลจาก:",
+                reference: "Health New Zealand | Te Whatu Ora",
+                referenceLink: "คลิกเพื่อไปที่เว็บไซต์ของ Health New Zealand | Te Whatu Ora"
+            },
+            zh: {
+                title: "医疗顾问",
+                subTitle: "点击消息块",
+                advice: "**建议** 如果您没有看到机器人的图标，请等待 3 秒！",
+                description: "如果您想获取有关健康的建议，您可以点击下方的图标。 请完整填写您的症状，以便机器人能够有效、准确地分析数据。",
+                info: "如果您想查看有关各种疾病症状的信息，您可以点击左箭头查看信息。 我们引用了来自以下机构的信息：",
+                reference: "新西兰卫生局 | Te Whatu Ora",
+                referenceLink: "点击进入新西兰卫生局 | Te Whatu Ora 的网站"
             }
+        };
+
+        document.getElementById("languageSwitcher").addEventListener("change", function() {
+            const selectedLang = this.value;
+            document.getElementById("title").textContent = translations[selectedLang].title;
+            document.getElementById("subTitle").textContent = translations[selectedLang].subTitle;
+            document.getElementById("advice").textContent = translations[selectedLang].advice;
+            document.getElementById("description").textContent = translations[selectedLang].description;
+            document.getElementById("info").textContent = translations[selectedLang].info;
+            document.getElementById("reference").textContent = translations[selectedLang].reference;
+            document.getElementById("referenceLink").textContent = translations[selectedLang].referenceLink;
         });
     </script>
+
+    <!-- วิดีโอ YouTube ใต้สุดของหน้า -->
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/wO3kabWQ1GY?si=wYgUI0bLSXsVwm-r" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 </body>
 </html>
