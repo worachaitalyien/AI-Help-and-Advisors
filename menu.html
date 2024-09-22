@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AI Medical Advisor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        /* เพิ่มรูป Back.JPG เป็นพื้นหลัง */
+        body {
+            background-image: url('Back.JPG');
+            background-size: cover; /* ปรับขนาดรูปให้ครอบคลุมทั้งหน้า */
+            background-position: center; /* จัดรูปให้อยู่ตรงกลาง */
+            background-repeat: no-repeat; /* ไม่ให้รูปซ้ำ */
+            font-family: Arial, sans-serif;
+        }
+
+        /* เพิ่มระยะห่างเนื้อหาข้างล่างเพื่อไม่ให้ถูกบัง */
+        .container {
+            margin-top: 70px; /* ปรับตามความสูงของแถบ w3-top */
+            background-color: rgba(255, 255, 255, 0.8); /* เพิ่มพื้นหลังขาวโปร่งใสให้กับเนื้อหา */
+            padding: 20px;
+            border-radius: 10px; /* เพิ่มความโค้งให้ขอบ */
+        }
+
+        .logo {
+            height: 40px; /* ขนาดของโลโก้ */
+            vertical-align: middle;
+        }
+
+        /* สไตล์สำหรับลูกศรนำทาง */
+        .arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 36px;
+            padding: 10px;
+            text-decoration: none;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+
+        .arrow.left {
+            left: 10px;
+        }
+
+        .arrow.right {
+            right: 10px;
+        }
+
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- แถบด้านบนที่มีโลโก้และข้อความ -->
+    <div class="w3-top">
+        <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
+            <!-- โลโก้และข้อความ -->
+            <div class="w3-left">
+                <img src="AI.jpeg" alt="Logo" class="logo">
+                <span class="w3-bar-item">AI Medical Advisor</span>
+            </div>
+            <!-- ลิงก์เมนูด้านขวา -->
+            <div class="w3-right w3-hide-small">
+                <a href="menu.html" class="w3-bar-item w3-button">Menu</a>
+                <a href="disease.html" class="w3-bar-item w3-button">Disease</a>
+                <a href="contact.html" class="w3-bar-item w3-button">Contact Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- เนื้อหาข้างล่าง -->
+    <div class="container">
+        <h1><strong>Medical Advisor</strong></h1>
+
+        <h2>Click in message Block</h2>
+
+        <h3>**Advice** Please Wait 3s if you don't see Bot's Icon !</h3>
+        <p>If you want to get advice about health, you can click the icon below.
+            Please fill in your symptoms completely so that the bot can analyze the data efficiently and accurately.</p>
+
+        <p>If you want to see information about symptoms of various diseases, you can click the left arrow to see information.
+            We have referenced information from:</p>
+
+        <h3>Health New Zealand | Te Whatu Ora</h3>
+        <a href="https://info.health.nz/" target="_blank">Click to go to Health New Zealand | Te Whatu Ora's Website</a>
+
+        <!-- Botpress script -->
+        <script src="https://cdn.botpress.cloud/webchat/v2.1/inject.js"></script>
+        <script src="https://mediafiles.botpress.cloud/e63c000e-02ed-4ef3-ae1e-ee44622c5062/webchat/v2.1/config.js"></script>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <a href="about.html" class="arrow left">&#10094;</a>
+    <a href="disease.html" class="arrow right">&#10095;</a>
+
+    <script>
+        // Function to log chat data to Google Sheets
+        function logChatToGoogleSheets(userMessage, botMessage) {
+            fetch('YOUR_APPS_SCRIPT_WEB_APP_URL', { // Replace with your Apps Script Web App URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userMessage: userMessage,
+                    botMessage: botMessage
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log('Data logged to Google Sheets:', data))
+            .catch(error => console.error('Error logging to Google Sheets:', error));
+        }
+
+        // Event listener for messages from Botpress
+        window.addEventListener("message", function(event) {
+            if (event.data && event.data.payload && event.data.payload.text) {
+                const userMessage = event.data.payload.text;
+
+                // Log user messages
+                if (event.data.type === 'user_message') {
+                    logChatToGoogleSheets(userMessage, 'bot response pending...');
+                }
+
+                // Log bot responses
+                if (event.data.type === 'bot_response') {
+                    const botMessage = event.data.payload.text;
+                    logChatToGoogleSheets('User message already logged', botMessage);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
